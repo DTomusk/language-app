@@ -1,7 +1,7 @@
 from uuid import uuid4
 import pytest
 
-from backend.domain.models import User, Flashcard, Lemma, Sentence
+from backend.flashcards.domain.models import User, Flashcard, Lemma, Sentence
 
 # region User Tests
 def test_user_initialization():
