@@ -1,6 +1,6 @@
 import pytest
 
-from backend.user_management.domain.models import Email
+from backend.user_management.domain.models import Email, User
 
 def test_valid_emails():
     valid_emails = [
@@ -31,4 +31,12 @@ def test_invalid_emails():
     for email in invalid_emails:
         with pytest.raises(ValueError, match=r"Invalid email format"):
             Email(email=email)
+
+def test_user_creation():
+    email = Email(email="mail@e.com")
+    hashed_password = "hashed_password"
+    user = User(email=email, hashed_password=hashed_password)
+    assert user.id is not None, "User ID should be generated"
+    assert user.email == email, "User email should match the provided email"
+    assert user.hashed_password == hashed_password, "User hashed password should match the provided password"
     
