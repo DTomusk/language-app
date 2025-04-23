@@ -1,3 +1,4 @@
+from uuid import uuid4
 import pytest
 from unittest.mock import MagicMock
 from backend.user_management.application.use_cases.register_user import RegisterUser
@@ -32,16 +33,17 @@ def test_register_user_success(register_user, mock_user_repository, mock_hasher)
     user = register_user.execute(email=email, password=password)
 
     # Assert
+    assert user.id is not None, "User ID should be generated"
     assert user.email.email == email, "User email should match the provided email"
     assert user.hashed_password is not None, "User hashed password should be set"
     mock_user_repository.get_by_email.assert_called_once_with(email)
     mock_user_repository.save.assert_called_once_with(user)
     mock_hasher.hash.assert_called_once_with(password)
 
-def test_register_user_existing_email(register_user, mock_user_repository):
+def test_register_user_existing_email(register_user, mock_user_repository, mock_hasher):
     # Arrange
     mock_user_repository.get_by_email.return_value = User(
-        email=Email(email="test@example.com"), hashed_password="hashed_password"
+        id=uuid4(), email=Email(email="test@example.com"), hashed_password="hashed_password"
     )
     email = "test@example.com"
     password = "securepassword"
@@ -52,3 +54,17 @@ def test_register_user_existing_email(register_user, mock_user_repository):
 
     mock_user_repository.get_by_email.assert_called_once_with(email)
     mock_user_repository.save.assert_not_called()
+    mock_hasher.hash.assert_not_called()
+
+def test_register_user_invalid_email(register_user, mock_user_repository, mock_hasher):
+    # Arrange
+    email = "invalid-email"
+    password = "securepassword"
+
+    # Act & Assert
+    with pytest.raises(ValueError, match="Invalid email format"):
+        register_user.execute(email=email, password=password)
+
+    mock_user_repository.get_by_email.assert_not_called()
+    mock_user_repository.save.assert_not_called()
+    mock_hasher.hash.assert_not_called()

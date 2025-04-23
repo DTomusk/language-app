@@ -1,3 +1,4 @@
+from uuid import UUID
 import pytest
 
 from backend.user_management.domain.models import Email, User
@@ -33,10 +34,11 @@ def test_invalid_emails():
             Email(email=email)
 
 def test_user_creation():
+    id = UUID("12345678-1234-5678-1234-567812345678")
     email = Email(email="mail@e.com")
     hashed_password = "hashed_password"
-    user = User(email=email, hashed_password=hashed_password)
-    assert user.id is not None, "User ID should be generated"
+    user = User(id=id, email=email, hashed_password=hashed_password)
+    assert user.id == id, "User ID should be generated"
     assert user.email == email, "User email should match the provided email"
     assert user.hashed_password == hashed_password, "User hashed password should match the provided password"
     

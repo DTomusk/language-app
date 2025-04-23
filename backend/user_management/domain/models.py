@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import re
-from uuid import uuid4
+from uuid import UUID
 
 @dataclass(frozen=True)
 class Email:
@@ -12,7 +12,7 @@ class Email:
             raise ValueError(f"Invalid email format: {self.email}")
 
 class User:
-    def __init__(self, email: Email, hashed_password: str):
-        self.id = uuid4()
+    def __init__(self, id: UUID, email: Email, hashed_password: str):
+        self.id = id
         self.email = email
         self.hashed_password = hashed_password
