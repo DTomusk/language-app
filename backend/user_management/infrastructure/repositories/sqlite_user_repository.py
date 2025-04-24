@@ -21,7 +21,7 @@ class SqliteUserRepository(UserRepository):
     
     def save(self, user: User):
         db_user = UserModel(
-            id=user.id,
+            id=str(user.id),
             email=user.email.email,
             hashed_password=user.hashed_password,
         )

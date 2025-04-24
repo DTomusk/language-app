@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String
-from infrastructure.db.database import Base
+from backend.infrastructure.db.database import Base
 
 
 class UserModel(Base):

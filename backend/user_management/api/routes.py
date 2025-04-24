@@ -9,6 +9,7 @@ from backend.user_management.infrastructure.utilities.bcrypt_hasher import BCryp
 router = APIRouter()
 
 # get new session per request
+# TODO: this dependency is required in all contexts, so it should be moved to a common place
 def get_db():
     db = SessionLocal()
     try:
@@ -17,6 +18,7 @@ def get_db():
     finally:
         db.close()
 
+# TODO: dependency injection should be independent of use case (e.g. all use cases here will use the same sqliterepository or whatever we move to in the future)
 def get_register_user_use_case(db=Depends(get_db)):
     hasher = BCryptHasher()
     user_repo = SqliteUserRepository(session=db)
