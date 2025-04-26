@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from backend.user_management.application.utilities.token_service import TokenService
 
-# Store algorithm and secret key in env
+# TODO: Store algorithm and secret key in env
 class JWTTokenService(TokenService):
     def create_token(self, data, expires_minutes):
         to_encode = data.copy()
@@ -11,6 +11,7 @@ class JWTTokenService(TokenService):
         return jwt.encode(payload=to_encode, key='SECRET', algorithm='HS256')
     
     def verify_token(self, token):
+        print(token)
         try:
             payload = jwt.decode(token, key='SECRET', algorithms=['HS256'])
             return payload.get("sub")
