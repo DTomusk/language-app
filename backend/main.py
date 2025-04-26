@@ -1,7 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from backend.infrastructure.db.database import Base, engine
-from backend.user_management.infrastructure.models import UserModel
 from backend.user_management.api.routes import router as user_management_router
 
 Base.metadata.create_all(bind=engine)
