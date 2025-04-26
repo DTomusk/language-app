@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from backend.infrastructure.db.database import SessionLocal, get_db
+from backend.infrastructure.db.database import get_db
 from backend.user_management.application.use_cases.register_user import RegisterUser
 from backend.user_management.infrastructure.repositories.sqlite_user_repository import SqliteUserRepository
 from backend.user_management.infrastructure.utilities.bcrypt_hasher import BCryptHasher
