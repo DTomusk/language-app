@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 
-from backend.infrastructure.db.database import SessionLocal
+from backend.infrastructure.db.database import SessionLocal, get_db
 from backend.user_management.application.use_cases.register_user import RegisterUser
 from backend.user_management.infrastructure.repositories.sqlite_user_repository import SqliteUserRepository
 from backend.user_management.infrastructure.utilities.bcrypt_hasher import BCryptHasher
@@ -8,20 +8,13 @@ from backend.user_management.infrastructure.utilities.bcrypt_hasher import BCryp
 
 router = APIRouter()
 
-# get new session per request
-# TODO: this dependency is required in all contexts, so it should be moved to a common place
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    # close session after the request is done
-    finally:
-        db.close()
+def get_user_repository(db=Depends(get_db)):
+    return SqliteUserRepository(session=db)
 
-# TODO: dependency injection should be independent of use case (e.g. all use cases here will use the same sqliterepository or whatever we move to in the future)
-def get_register_user_use_case(db=Depends(get_db)):
-    hasher = BCryptHasher()
-    user_repo = SqliteUserRepository(session=db)
+def get_bcrypt_hasher():
+    return BCryptHasher()
+
+def get_register_user_use_case(user_repo=Depends(get_user_repository), hasher=Depends(get_bcrypt_hasher)):
     return RegisterUser(user_repository=user_repo, hasher=hasher)
 
 @router.post("/register")
