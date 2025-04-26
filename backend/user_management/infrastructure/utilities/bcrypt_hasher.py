@@ -1,4 +1,3 @@
-
 from bcrypt import checkpw, gensalt, hashpw
 from backend.user_management.application.utilities.hasher import Hasher
 
