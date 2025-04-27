@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
-from backend.user_management.api.auth import get_current_user
+from backend.auth import get_current_user
 from backend.user_management.api.dependencies import get_login_use_case, get_register_user_use_case
 
 router = APIRouter()
