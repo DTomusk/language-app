@@ -2,12 +2,15 @@ from unittest.mock import MagicMock
 from uuid import uuid4
 import pytest
 
+from backend.user_management.application.repositories.user_repository import UserRepository
 from backend.user_management.application.use_cases.login import Login
+from backend.user_management.application.utilities.hasher import Hasher
+from backend.user_management.application.utilities.token_service import TokenService
 from backend.user_management.domain.models import Email, User
 
 
 @pytest.fixture
-def mock_user_repository():
+def mock_user_repository() -> UserRepository:
     """Fixture for a mocked UserRepository."""
     mock_repo = MagicMock()
     mock_repo.get_by_email.return_value = None
@@ -15,21 +18,21 @@ def mock_user_repository():
     return mock_repo
 
 @pytest.fixture
-def mock_hasher():
+def mock_hasher() -> Hasher:
     """Fixture for a mocked Hasher."""
     mock_hasher = MagicMock()
     mock_hasher.hash.return_value = "hashed_password"
     return mock_hasher
 
 @pytest.fixture
-def mock_token_service():
+def mock_token_service() -> TokenService:
     """Fixture for a mocked TokenService."""
     mock_token_service = MagicMock()
     mock_token_service.create_token.return_value = "mocked_token"
     return mock_token_service
 
 @pytest.fixture
-def login(mock_user_repository, mock_hasher, mock_token_service):
+def login(mock_user_repository, mock_hasher, mock_token_service) -> Login:
     """Fixture for the Login use case."""
     return Login(user_repository=mock_user_repository, hasher=mock_hasher, token_service=mock_token_service)
 

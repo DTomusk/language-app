@@ -5,6 +5,13 @@ from uuid import UUID, uuid4
 class Lemma:
     text: str
 
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return self.text == other
+        if isinstance(other, Lemma):
+            return self.text == other.text
+        return False
+
 @dataclass(frozen=True)
 class Sentence:
     text: str
@@ -19,7 +26,6 @@ class Sentence:
 # TODO: flashcards will need to store more metadata for spaced repetition etc.
 class Flashcard:
     def __init__(self, user_id: UUID, lemma: Lemma):
-        self.id = uuid4()
         self.user_id = user_id
         self.lemma = lemma
         self.sentences = []
@@ -29,6 +35,11 @@ class Flashcard:
             raise ValueError("Sentence already exists")
         sentence = Sentence(text)
         self.sentences.append(sentence)
+
+    def __eq__(self, other):
+        if isinstance(other, Flashcard):
+            return self.user_id == other.user_id and self.lemma == other.lemma
+        return False        
 
 class User:
     def __init__(self, user_id: UUID):

@@ -52,7 +52,6 @@ def test_flashcard_initialization():
     lemma = Lemma(text="example")
     flashcard = Flashcard(user_id, lemma)
     
-    assert flashcard.id is not None
     assert flashcard.user_id == user_id
     assert flashcard.lemma == lemma
     assert flashcard.sentences == []
