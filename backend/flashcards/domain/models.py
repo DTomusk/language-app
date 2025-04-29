@@ -26,6 +26,7 @@ class Sentence:
 # TODO: flashcards will need to store more metadata for spaced repetition etc.
 class Flashcard:
     def __init__(self, user_id: UUID, lemma: Lemma):
+        self.id = uuid4()
         self.user_id = user_id
         self.lemma = lemma
         self.sentences = []

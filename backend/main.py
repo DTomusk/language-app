@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from backend.infrastructure.db.database import Base, engine
 from backend.user_management.api.routes import router as user_management_router
+from backend.flashcards.api.routes import router as flashcard_router
 
 Base.metadata.create_all(bind=engine)
 
@@ -18,4 +19,10 @@ app.include_router(
     user_management_router,
     prefix="/users",
     tags=["user_management"],
+)
+
+app.include_router(
+    flashcard_router,
+    prefix="/flashcards",
+    tags=["flashcards"]
 )
