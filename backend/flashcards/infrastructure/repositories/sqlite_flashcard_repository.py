@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
+from sqlalchemy import exists
+from sqlalchemy.orm import Session, joinedload
 
 from backend.flashcards.application.repositories.flashcard_repository import FlashcardRepository
-from backend.flashcards.domain.models import Flashcard
+from backend.flashcards.domain.models import Flashcard, Lemma, Sentence
 from backend.flashcards.infrastructure.models import FlashcardModel
 
 
@@ -9,14 +10,26 @@ class SqliteFlashcardRepository(FlashcardRepository):
     def __init__(self, session: Session):
         self.session = session
 
-    def get_flashcard(self, user_id: str, lemma: str) -> Flashcard:
-        """Get a flashcard by user ID and word."""
-        result = self.session.query(FlashcardModel).filter_by(user_id=user_id, lemma=lemma).first()
+    def flashcard_exists(self, user_id: str, lemma: str) -> bool:
+        return self.session.query(
+            exists().where(
+                FlashcardModel.user_id == user_id,
+                FlashcardModel.lemma == lemma
+            )
+        ).scalar()
+
+    def get_flashcard(self, flashcard_id = str) -> Flashcard:
+        result = (
+            self.session.query(FlashcardModel)
+            .options(joinedload(FlashcardModel.sentences))
+            .filter_by(id=flashcard_id).first()
+        )
         if result:
             return Flashcard(
                 id=result.id,
-                lemma=result.lemma,
+                lemma=Lemma(result.lemma),
                 user_id=result.user_id,
+                sentences=[Sentence(sentence.text) for sentence in result.sentences],
             )
         return None
 

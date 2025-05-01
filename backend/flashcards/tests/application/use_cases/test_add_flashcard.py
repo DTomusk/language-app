@@ -10,7 +10,7 @@ from backend.flashcards.domain.models import Flashcard, Lemma
 def mock_flashcard_repository() -> FlashcardRepository:
     """Fixture for a mocked FlashcardRepository."""
     mock_repo = MagicMock()
-    mock_repo.get_flashcard.return_value = None
+    mock_repo.flashcard_exists.return_value = None
     mock_repo.create_flashcard = MagicMock()
     return mock_repo
 
@@ -29,7 +29,7 @@ def test_add_flashcard_success(add_flashcard, mock_flashcard_repository):
     add_flashcard.execute(user_id=user_id, lemma=lemma)
 
     # Assert
-    mock_flashcard_repository.get_flashcard.assert_called_once_with(user_id, lemma=lemma)
+    mock_flashcard_repository.flashcard_exists.assert_called_once_with(user_id, lemma=lemma)
     expected_flashcard = Flashcard(user_id=user_id, lemma=Lemma(lemma))
     actual_flashcard = mock_flashcard_repository.create_flashcard.call_args[0][0]
     assert actual_flashcard == expected_flashcard, f"Expected {expected_flashcard}, but got {actual_flashcard}"
@@ -38,7 +38,7 @@ def test_add_flashcard_existing_flashcard(add_flashcard, mock_flashcard_reposito
     # Arrange
     user_id = "user123"
     lemma = "test_word"
-    mock_flashcard_repository.get_flashcard.return_value = Flashcard(
+    mock_flashcard_repository.flashcard_exists.return_value = Flashcard(
         user_id=user_id, lemma=lemma
     )
 
@@ -46,5 +46,5 @@ def test_add_flashcard_existing_flashcard(add_flashcard, mock_flashcard_reposito
     with pytest.raises(ValueError, match="Flashcard already exists."):
         add_flashcard.execute(user_id=user_id, lemma=lemma)
 
-    mock_flashcard_repository.get_flashcard.assert_called_once_with(user_id, lemma=lemma)
+    mock_flashcard_repository.flashcard_exists.assert_called_once_with(user_id, lemma=lemma)
     mock_flashcard_repository.create_flashcard.assert_not_called()

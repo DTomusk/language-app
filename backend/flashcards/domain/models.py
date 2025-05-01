@@ -12,6 +12,7 @@ class Lemma:
             return self.text == other.text
         return False
 
+# Sentences are value objects accessible only via the aggregate root (Flashcard).
 @dataclass(frozen=True)
 class Sentence:
     text: str
@@ -24,6 +25,7 @@ class Sentence:
         return False
 
 # TODO: flashcards will need to store more metadata for spaced repetition etc.
+# Flashcard is an aggregate root
 class Flashcard:
     def __init__(self, user_id: UUID, lemma: Lemma):
         self.id = uuid4()
@@ -42,6 +44,7 @@ class Flashcard:
             return self.user_id == other.user_id and self.lemma == other.lemma
         return False        
 
+# TODO: We likely don't need a user model in this domain
 class User:
     def __init__(self, user_id: UUID):
         self.id = user_id
