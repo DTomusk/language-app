@@ -18,3 +18,8 @@ class FlashcardRepository(ABC):
     def create_flashcard(self, flashcard: Flashcard) -> None:
         """Create a new flashcard."""
         pass
+
+    @abstractmethod
+    def update_flashcard(self, flashcard: Flashcard) -> None:
+        """Update an existing flashcard."""
+        pass

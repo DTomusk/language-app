@@ -1,3 +1,4 @@
+from uuid import uuid4
 from backend.flashcards.application.repositories.flashcard_repository import FlashcardRepository
 from backend.flashcards.domain.models import Flashcard, Lemma
 
@@ -13,6 +14,6 @@ class AddFlashcard:
             raise ValueError("Flashcard already exists.")
 
         # Create a new flashcard
-        flashcard = Flashcard(user_id=user_id, lemma=Lemma(lemma))
+        flashcard = Flashcard(id=uuid4(), user_id=user_id, lemma=Lemma(lemma))
         self.flashcard_repository.create_flashcard(flashcard)
         

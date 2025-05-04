@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from uuid import UUID, uuid4
 
 @dataclass(frozen=True)
@@ -27,35 +27,24 @@ class Sentence:
 # TODO: flashcards will need to store more metadata for spaced repetition etc.
 # Flashcard is an aggregate root
 class Flashcard:
-    def __init__(self, user_id: UUID, lemma: Lemma):
-        self.id = uuid4()
+    def __init__(self, id: UUID, user_id: UUID, lemma: Lemma):
+        self.id = id
         self.user_id = user_id
         self.lemma = lemma
-        self.sentences = []
+        self.sentences: list[Sentence] = []
+        # This is so the repo knows which sentences to add
+        # while the domain model shouldn't have to worry about the repo 
+        # it doesn't make sense to have to figure out what to update each time
+        self._added_sentences: list[Sentence] = []
     
     def add_sentence(self, text: str):
         if any(sentence == text for sentence in self.sentences):
             raise ValueError("Sentence already exists")
         sentence = Sentence(text)
         self.sentences.append(sentence)
+        self._added_sentences.append(sentence)
 
     def __eq__(self, other):
         if isinstance(other, Flashcard):
             return self.user_id == other.user_id and self.lemma == other.lemma
         return False        
-
-# TODO: We likely don't need a user model in this domain
-class User:
-    def __init__(self, user_id: UUID):
-        self.id = user_id
-        self.flashcards = []
-
-    def add_flashcard(self, lemma: Lemma):
-        if any(flashcard.lemma == lemma for flashcard in self.flashcards):
-            raise ValueError("Flashcard already exists")
-        flashcard = Flashcard(self.id, lemma)
-        self.flashcards.append(flashcard)
-        return flashcard
-
-    def get_flashcards(self):
-        return self.flashcards

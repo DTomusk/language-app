@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+from uuid import UUID
 import pytest
 
 from backend.flashcards.application.repositories.flashcard_repository import FlashcardRepository
@@ -22,6 +23,7 @@ def add_flashcard(mock_flashcard_repository) -> AddFlashcard:
 
 def test_add_flashcard_success(add_flashcard, mock_flashcard_repository):
     # Arrange
+    id = "flashcard123"
     user_id = "user123"
     lemma = "test_word"
 
@@ -30,16 +32,17 @@ def test_add_flashcard_success(add_flashcard, mock_flashcard_repository):
 
     # Assert
     mock_flashcard_repository.flashcard_exists.assert_called_once_with(user_id, lemma=lemma)
-    expected_flashcard = Flashcard(user_id=user_id, lemma=Lemma(lemma))
+    expected_flashcard = Flashcard(id=id, user_id=user_id, lemma=Lemma(lemma))
     actual_flashcard = mock_flashcard_repository.create_flashcard.call_args[0][0]
     assert actual_flashcard == expected_flashcard, f"Expected {expected_flashcard}, but got {actual_flashcard}"
 
 def test_add_flashcard_existing_flashcard(add_flashcard, mock_flashcard_repository):
     # Arrange
+    id = "flashcard123"
     user_id = "user123"
     lemma = "test_word"
     mock_flashcard_repository.flashcard_exists.return_value = Flashcard(
-        user_id=user_id, lemma=lemma
+        id=id, user_id=user_id, lemma=lemma
     )
 
     # Act & Assert
