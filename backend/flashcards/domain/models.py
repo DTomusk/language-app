@@ -27,11 +27,11 @@ class Sentence:
 # TODO: flashcards will need to store more metadata for spaced repetition etc.
 # Flashcard is an aggregate root
 class Flashcard:
-    def __init__(self, id: UUID, user_id: UUID, lemma: Lemma):
+    def __init__(self, id: UUID, user_id: UUID, lemma: Lemma, sentences: list[Sentence] = None):
         self.id = id
         self.user_id = user_id
         self.lemma = lemma
-        self.sentences: list[Sentence] = []
+        self.sentences: list[Sentence] = sentences if sentences is not None else []
         # This is so the repo knows which sentences to add
         # while the domain model shouldn't have to worry about the repo 
         # it doesn't make sense to have to figure out what to update each time

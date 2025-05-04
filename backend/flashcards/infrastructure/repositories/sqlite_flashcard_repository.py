@@ -1,9 +1,10 @@
+from uuid import uuid4
 from sqlalchemy import exists
 from sqlalchemy.orm import Session, joinedload
 
 from backend.flashcards.application.repositories.flashcard_repository import FlashcardRepository
 from backend.flashcards.domain.models import Flashcard, Lemma, Sentence
-from backend.flashcards.infrastructure.models import FlashcardModel
+from backend.flashcards.infrastructure.models import FlashcardModel, SentenceModel
 
 
 class SqliteFlashcardRepository(FlashcardRepository):
@@ -40,4 +41,15 @@ class SqliteFlashcardRepository(FlashcardRepository):
             user_id=flashcard.user_id,
         )
         self.session.add(db_flashcard)
+        self.session.commit()
+
+    # TODO: we're not using _added_sentences in the current implementation
+    def update_flashcard(self, flashcard: Flashcard) -> None:
+        for sentence in flashcard._added_sentences:
+            db_sentence = SentenceModel(
+                id=str(uuid4()),
+                text=sentence.text, 
+                flashcard_id=flashcard.id
+            )
+            self.session.add(db_sentence)
         self.session.commit()
